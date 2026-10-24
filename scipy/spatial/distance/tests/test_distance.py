@@ -1991,6 +1991,16 @@ def test_canberra():
     assert wcanberra([1, 1, 0, 0], [1, 0, 1, 0]) == 2
 
 
+def test_canberra_int64_min():
+    # gh-26486: abs() of the smallest int64 overflowed, giving a negative,
+    # asymmetric distance.
+    u = np.array([np.iinfo(np.int64).min], dtype=np.int64)
+    v = np.array([0], dtype=np.int64)
+    assert canberra(u, v) == 1.0
+    assert canberra(v, u) == 1.0
+    assert cdist([u], [v], metric="canberra")[0, 0] == 1.0
+
+
 def test_braycurtis():
     # Regression test for ticket #1430.
     assert math.isclose(wbraycurtis([1, 2, 3], [2, 4, 6]), 1. / 3,  abs_tol=1e-15)
